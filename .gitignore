@@ -1,0 +1,21 @@
+.DS_Store
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Dependency directory
+node_modules
+public/styles/_libs
+
+# Ignore .DS_Store files on OS X
+.DS_Store
+
+# Compiled JS and CSS
+public/js/output
+public/styles/output

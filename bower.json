@@ -1,0 +1,17 @@
+{
+  "name": "npm-pokemon",
+  "version": "0.0.0",
+  "main": "app.js",
+  "moduleType": [
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "modularized-normalize-scss": "~3.0.3",
+    "Scut": "scut#^1.4.0"
+  }
+}
