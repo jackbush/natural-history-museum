@@ -47,6 +47,9 @@
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
-    "happiness": "^6.0.7"
+    "happiness": "^6.0.7",
+    "mapbox": "^0.12.0",
+    "mapbox.js": "^3.0.1",
+    "openlayers": "^3.19.1"
   }
 }

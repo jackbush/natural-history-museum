@@ -77,8 +77,14 @@ fs.readFile('./' + xmlLocation + xmlUrl, function(err, data) {
 							if (img[1] === c[0]) object.classification = c;
 						});
 						if (object.classification&&object.specimen) {
+							var lat = object.specimen[5].replace('"', '').replace('"', '');
+							var long = object.specimen[6].replace('"', '').replace('"', '');
+							object.position = {
+								lat: lat,
+								long: long,
+							};
 							output.push(object);
-							console.log(object);
+							console.log(lat, long);
 						}
 					}
 				}

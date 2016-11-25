@@ -6,7 +6,7 @@ module.exports = {
 	sass: {
 		src: './public/styles/',
 		files: [
-			'main.scss'
+			'main.scss', 'main.sass'
 		],
 		dest: './public/styles/output/'
 	},
