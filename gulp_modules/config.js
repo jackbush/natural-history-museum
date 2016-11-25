@@ -14,7 +14,8 @@ module.exports = {
 		src: './public/js/',
 		directoryPrefix: '_',
 		directories: [
-			'main'
+			'main',
+			'threeScene'
 		],
 		dest: './public/js/output/',
 		outputSuffix: '.js'
