@@ -1,11 +1,3 @@
 include ./mixins/base
 +page
 	#container
-
-//- old lookup
-	- console.log(locals.sounds.length);
-	- var keys = Object.keys(locals.sounds)
-	each key in keys
-		- var sound = sounds[key]
-		- console.log(sound.position.lat)
-		a-sphere(position=`${sound.position.lat} 0 ${sound.position.long}"`, color="#00ff00", radius="1")

@@ -1,51 +1,40 @@
 var THREE = require('three');
 require('./_deviceOrientationControls');
 
+var addSoundsToScene = require('./_addSoundsToScene.js');
+
 window.addEventListener('load', function() {
-	var container, camera, scene, renderer, controls, geometry, mesh;
+	// Ingredients
+	var container = document.getElementById('container');
+	var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100);
+	var controls = new THREE.DeviceOrientationControls(camera);
+	var scene = new THREE.Scene();
+	var renderer = new THREE.WebGLRenderer();
 
-	var animate = function() {
-		window.requestAnimationFrame(animate);
-		controls.update();
-		renderer.render(scene, camera);
-	};
-
-	container = document.getElementById('container');
-	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100);
-	controls = new THREE.DeviceOrientationControls(camera);
-	scene = new THREE.Scene();
-
-	var geometry = new THREE.SphereGeometry(500, 16, 8);
-	geometry.scale(-1, 1, 1);
-
-	var material = new THREE.MeshBasicMaterial({
-		map: new THREE.TextureLoader().load('./textures/interior.jpg')
-	});
-
-	var mesh = new THREE.Mesh(geometry, material);
-	scene.add(mesh);
-
-	var geometry = new THREE.BoxGeometry(100, 100, 100, 4, 4, 4);
-	var material = new THREE.MeshBasicMaterial({
-		color: 0xff00ff,
-		side: THREE.BackSide,
-		wireframe: true
-	});
-	var mesh = new THREE.Mesh(geometry, material);
-	scene.add(mesh);
-
-	renderer = new THREE.WebGLRenderer();
+	// Renderer setup
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.domElement.style.position = 'absolute';
 	renderer.domElement.style.top = 0;
 	container.appendChild(renderer.domElement);
 
+	// Animation...
+	var animate = function tick () {
+		controls.update();
+		renderer.render(scene, camera);
+		window.requestAnimationFrame(tick);
+	};
+
+	// Adding sounds to the scene as meshes
+	addSoundsToScene(scene);
+
+	// Then render
+	animate();
+
+	// Deal with resize event
 	window.addEventListener('resize', function() {
 		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
 		renderer.setSize(window.innerWidth, window.innerHeight);
 	}, false);
-
-	animate();
 }, false);
