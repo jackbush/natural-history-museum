@@ -36,6 +36,7 @@
     "http": "0.0.0",
     "jquery": "^3.1.1",
     "morgan": "~1.6.1",
+    "paper": "^0.10.2",
     "pug": "^2.0.0-beta6",
     "require-dir": "^0.3.0",
     "serve-favicon": "~2.3.0",

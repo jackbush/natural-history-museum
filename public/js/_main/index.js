@@ -2,16 +2,23 @@ require('aframe');
 var $ = require('jquery');
 
 var start = null;
-var current = {x: 0, y: 0};
+var current = {
+	x: 0,
+	y: 0
+};
 var smoothing = 0.9;
 var newcoords = null;
-var canvas, ctx;
+var canvas;
+var ctx;
 var dot;
 
 ////// GPS
 
 function setNewCoords(position) {
-	newcoords = {x: position.coords.latitude, y: position.coords.longitude}; // set newcoords
+	newcoords = {
+		x: position.coords.latitude,
+		y: position.coords.longitude
+	}; // set newcoords
 	console.log('setNewCoords', newcoords);
 	if (start === null) start = newcoords; // define "start point"
 	newcoords.x -= start.x; // minus start point to get offset x
@@ -23,7 +30,6 @@ function smooth(existingValue, newValue, smoothing) {
 	return (existingValue * smoothing) + (newValue * (1 - smoothing));
 }
 
-
 function tweenPosition() {
 	current.x = smooth(current.x, newcoords.x, 0.99);
 	current.y = smooth(current.y, newcoords.y, 0.99);
@@ -31,7 +37,6 @@ function tweenPosition() {
 	dot.setAttribute('position', spherecoords);
 	window.requestAnimationFrame(tweenPosition); /// RUN ALL THE TIME
 };
-
 
 ////// A FRAME
 
@@ -44,5 +49,4 @@ function setupAframe() {
 window.onload = function() {
 	navigator.geolocation.watchPosition(setNewCoords);
 	setupAframe();
-	
 };
