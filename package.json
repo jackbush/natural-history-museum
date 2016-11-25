@@ -43,7 +43,8 @@
     "utf-8-validate": "^1.2.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.7.0"
+    "watchify": "^3.7.0",
+    "xml2js": "^0.4.17"
   },
   "devDependencies": {
     "happiness": "^6.0.7"
