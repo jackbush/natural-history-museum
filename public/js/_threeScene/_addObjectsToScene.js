@@ -1,7 +1,7 @@
 var THREE = require('three');
 var sounds = require('../../../bin/bioacoustica2015/meta.xml.json');
 
-module.exports = function addSoundsToScene (scene) {
+module.exports = function addObjectsToScene (scene) {
 	var soundShapes = [];
 	var soundKeys = Object.keys(sounds);
 	soundKeys.forEach(function (key) {
