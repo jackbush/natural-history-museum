@@ -1,12 +1,3 @@
-require('aframe');
-var Tone = require('tone');
-require('./_compass');
-var poisson = require('./_poisson');
-var maps = require('./_mapping');
-var datGui = require('dat-gui');
-var sounds = require('../../../bin/bioacoustica2015/meta.xml.json');
-
-
 
 function smoothValue(existingValue, newValue, smoothing) {
 	return (existingValue * smoothing) + (newValue * (1 - smoothing));
@@ -48,6 +39,24 @@ $ = (name, parent) => {
   var elements = parent.querySelectorAll(name);
   return elements;
 };
+
+
+require('aframe');
+var Tone = require('tone');
+require('./_compass');
+
+//// JACK
+
+var THREE = require('three');
+var Scene = require('../_threeScene/_setupScene.js');
+var soundobjects = require('../_threeScene/_addObjectsToScene.js');
+
+//// GILBOT
+
+var poisson = require('./_poisson');
+var maps = require('./_mapping');
+var datGui = require('dat-gui');
+var sounds = require('../../../bin/bioacoustica2015/meta.xml.json');
 
 
 
@@ -120,7 +129,7 @@ function Soundplayer() {
 	_.setup = function() {
 
 	};
-	_.update = function(geo, items) {
+	_.update = function(geo, items) { ///// SEARCH FOR DISTANCE
 		// console.log(geo.current);
 
 		var found = [];
@@ -219,6 +228,20 @@ window.onload = function() {
 
 	soundplayer = new Soundplayer;
 	soundplayer.setup();
+
+	// debugger;
+
+	scene = new Scene;
+
+	poisson = new PoissonDiskSampler(360, 180, 10, 30);
+  	poissonResults = poisson.sampleUntilSolution();
+	// Adding sounds to the scene as meshes
+	soundobjects = new soundobjects;
+	soundobjects.setup(scene.scene, poissonResults);
+	console.log(soundobjects.objects);
+
+	// Then render
+	scene.animate();
 
 	draw(); ///// BEGIN INFINITE DRAW LOOP
 

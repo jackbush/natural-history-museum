@@ -1,19 +1,20 @@
 var THREE = require('three');
-require('./_DeviceOrientationControls');
+require('./_deviceOrientationControls');
 require('./_FirstPersonControls');
 
-module.exports = function setupScene() {
+module.exports = function() {
 	// Ingredients
-	var container = document.getElementById('container');
-	var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100); //// FOV, RATIO, MIN, MAX
-	var scene = new THREE.Scene();
 
-	// var controls = new THREE.DeviceOrientationControls(camera);
-	var controls = new THREE.FirstPersonControls(camera, container);
-	controls.noFly = true;
-	controls.movementSpeed = 4;
-	controls.lookSpeed = 0.2;
-	controls.lookVertical = false;
+	var _ = this;
+
+	var container = document.getElementById('container');
+	_.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100); //// FOV, RATIO, MIN, MAX
+	_.scene = new THREE.Scene();
+	_.controls = new THREE.FirstPersonControls(_.camera, container);
+	_.controls.noFly = true;
+	_.controls.movementSpeed = 4;
+	_.controls.lookSpeed = 0.2;
+	_.controls.lookVertical = false;
 
 
 	// Renderer setup
@@ -26,29 +27,20 @@ module.exports = function setupScene() {
 
 	// Animation...
 	var clock = new THREE.Clock();
-	var animate = function tick() {
-		// First person controls
-		controls.update(clock.getDelta())
-		// Device orientation controls
-		// controls.update();
-		renderer.render(scene, camera);
-		window.requestAnimationFrame(tick);
+	_.animate = function() {
+		// First person _.controls
+		_.controls.update(clock.getDelta())
+		// Device orientation _.controls
+		// _.controls.update();
+		renderer.render(_.scene, _.camera);
+		window.requestAnimationFrame(_.animate);
 	};
 
 	// Deal with resize event
 	window.addEventListener('resize', function() {
-		camera.aspect = window.innerWidth / window.innerHeight;
-		camera.updateProjectionMatrix();
+		_.camera.aspect = window.innerWidth / window.innerHeight;
+		_.camera.updateProjectionMatrix();
 		renderer.setSize(window.innerWidth, window.innerHeight);
 	}, false);
 
-	// Return a config object
-	return {
-		container: container,
-		camera: camera,
-		controls: controls,
-		scene: scene,
-		renderer: renderer,
-		animate: animate,
-	};
 };
