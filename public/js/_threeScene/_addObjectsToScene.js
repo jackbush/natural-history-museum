@@ -4,6 +4,10 @@ var sounds = require('../../../bin/bioacoustica2015/meta.xml.json');
 module.exports = function addObjectsToScene (scene) {
 	var soundShapes = [];
 	var soundKeys = Object.keys(sounds);
+
+	// For approximation of final number
+	soundKeys = soundKeys.slice(0,150);
+
 	soundKeys.forEach(function (key) {
 		var sound = sounds[key];
 		var lat = sound.position.lat;
