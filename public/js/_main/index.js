@@ -49,7 +49,7 @@ require('./_compass');
 
 var THREE = require('three');
 var Scene = require('../_threeScene/_setupScene.js');
-var soundobjects = require('../_threeScene/_addObjectsToScene.js');
+var Objects = require('../_threeScene/_addObjectsToScene.js');
 
 //// GILBOT
 
@@ -60,7 +60,7 @@ var sounds = require('../../../bin/bioacoustica2015/meta.xml.json');
 
 
 
-var geolocator, soundplayer, poisson, poissonIndex, poissonResults;
+var geolocator, soundplayer, poisson, poissonIndex, poissonResults, soundobjects;
 
 
 function Geolocator() {
@@ -97,11 +97,8 @@ function Sampler() {
 	_.sampler = null;
 	_.panVol = null;
 	_.setup = function(url) {
-		console.log("Setup new sampler!")
-		var urlSanitised = url.replace('"', '').replace('"', '');
-		urlSanitised = "../../audio/417-13_Platystolus_faberi_552r3_.wav";
 		_.panner = new Tone.Panner(1);
-		_.sampler = new Tone.Sampler(urlSanitised, function(event, something){
+		_.sampler = new Tone.Sampler('../../audio/'+url, function(event, something){
 			console.log('Loaded!', _.sampler);
 			_.sampler.triggerAttack(0);
 		});
@@ -116,71 +113,33 @@ function Sampler() {
 
 function Soundplayer() {
 	var _ = this;
-	_.ctrl = {
-		distanceThreshold: 10,
-	};
-
-
-	_.gui = new datGui.GUI;
-	// window.gui = _.gui;
-	_.gui.add(_.ctrl, 'distanceThreshold', 0, 100);
 	_.current = [];
 	_.samplers = {};
 	_.setup = function() {
 
 	};
-	_.update = function(geo, items) { ///// SEARCH FOR DISTANCE
+	_.update = function(geo) { ///// SEARCH FOR DISTANCE
 		// console.log(geo.current);
 
-		var found = [];
-		for(var i=0; i< items.length;i++) {
-			var sound = items[i];
 
-			///// USE ORIGINAL
-
-			// var latlong = {x: parseFloat(sound.position.lat), y: parseFloat(sound.position.long)};
-
-			///// USE POISSON
-
-			latlong = {
-				x: poissonResults[i].x-180,
-				y: poissonResults[i].y-90,
-			};
-			// console.log(latlong);
-
-			if ((latlong.x)&&(latlong.y)) {
-				var distance = getDistance(geo.current, latlong);
-				if (distance < _.ctrl.distanceThreshold) {
-					// console.log(sounds[i]);
-					// getAngle(geo.current, latlong);
-					found.push({item: sounds[i], distance: distance});
-				}
-			}
-		};
+		var closest = soundobjects.getClosest(scene.camera.position);
+		//console.log(closest);
 
 		///// CREATE AND UPDATE
 
-		for (var i=0; i<found.length;i++) {
-			// console.log(found[i]);
-			var id = found[i].item.sound[0].replace('"', '').replace('"', '');
-			var url = found[i].item.sound[2];
-			var distance = found[i].distance;
-			if (_.current.indexOf(id) === -1) {
+		for (var i=0; i<closest.length;i++) {
+			if (_.current.indexOf(closest[i].audiofile) === -1) {
 				var sampler = new Sampler;
-				sampler.setup(url);
-				_.samplers[id] = sampler;
-				_.current.push(id);
+				sampler.setup(closest[i].audiofile);
+				_.samplers[closest[i].audiofile] = sampler;
+				_.current.push(closest[i].audiofile);
 			} else {
-				// console.log(id, _.samplers);
-
-
-				_.samplers[id].update();
+				_.samplers[closest[i].audiofile].update();
 			}
-		};
+		}
 
-		// console.log("Soundplayer.update() ", found.length);
+		console.log(_.current.length);
 
-		///// CREATE AND UPDATE
 	};
 };
 
@@ -188,27 +147,13 @@ function Soundplayer() {
 function draw() {
 
 	geolocator.update(); /// Keeps on smoothing values
-	soundplayer.update(geolocator, poissonResults); /// Looks for new soundz
+	soundplayer.update(geolocator); /// Looks for new soundz
 
-
-	///// DEBUG CAMERA ROTATION
-
-	// document.querySelector('.camera-angle').innerText = JSON.stringify(document.querySelector('a-camera').getAttribute('rotation').y);
-
-	//// DEBUG CAMERA POSITION
-
-	// var position = document.querySelector('a-camera').getAttribute('position');
-	// document.querySelector('.camera-position').innerText = JSON.stringify(position);
-
-	/// AUTO UPDATE POSITION FROM CAMERA
-
-	// geolocator.current.x = position.x;
-	// geolocator.current.y = position.z;
 
 
 	//// DEBUG FOUND SOUNDS
 
-	document.querySelector('.found-sounds').innerText = JSON.stringify(soundplayer.current.length);
+	// document.querySelector('.found-sounds').innerText = JSON.stringify(soundplayer.current.length);
 
 	window.requestAnimationFrame(draw); /// LOOP
 };
@@ -232,13 +177,13 @@ window.onload = function() {
 	// debugger;
 
 	scene = new Scene;
+	window.scene = scene;
 
 	poisson = new PoissonDiskSampler(360, 180, 10, 30);
   	poissonResults = poisson.sampleUntilSolution();
 	// Adding sounds to the scene as meshes
-	soundobjects = new soundobjects;
+	soundobjects = new Objects;
 	soundobjects.setup(scene.scene, poissonResults);
-	console.log(soundobjects.objects);
 
 	// Then render
 	scene.animate();
