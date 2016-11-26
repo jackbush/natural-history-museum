@@ -8,7 +8,8 @@ module.exports = {
 		files: [
 			'main.scss', 'main.sass'
 		],
-		dest: './public/styles/output/'
+		dest: './public/styles/output/',
+		destProd: './rel/styles/'
 	},
 	js: {
 		src: './public/js/',
@@ -18,9 +19,11 @@ module.exports = {
 			'threeScene'
 		],
 		dest: './public/js/output/',
+		destProd: './rel/js/',
 		outputSuffix: '.js'
 	},
 	pug: {
-		src: './views/'
+		src: './views/',
+		destProd: './rel/'
 	}
 };
