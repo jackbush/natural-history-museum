@@ -1,5 +1,9 @@
 include ./mixins/base
 +page
+	.debug
+		.camera-angle
+		.camera-position
+		.found-sounds
 	- console.log(locals.sounds.length);
 	a-scene
 		- var keys = Object.keys(locals.sounds)
@@ -8,5 +12,5 @@ include ./mixins/base
 			- console.log(sound.position.lat)
 			a-sphere(position=`${sound.position.lat} 0 ${sound.position.long}"`, color="#00ff00", radius="1")
 		a-sphere(position="0 0 0",radius="1.25",color="#EF2D5E")
-		a-entity#camera(position="0 0 0", rotation="0 0 0")
+		a-entity#camera(position="0 0 0", rotation="0 180 0")
 			a-camera( look-controls wasd-controls)

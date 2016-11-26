@@ -63,6 +63,7 @@ fs.readFile('./' + xmlLocation + xmlUrl, function(err, data) {
 			console.log('No. of specimen', specimen.length);
 			console.log('No. of images', images.length);
 			var output = [];
+			var wavs = "";
 			images.forEach((img)=>{
 				//console.log(img[1]);
 				if (img[2]) {
@@ -70,6 +71,7 @@ fs.readFile('./' + xmlLocation + xmlUrl, function(err, data) {
 					if ((filetype === 'mp3')||(filetype==='wav')) {
 						var object = {};
 						object.sound = img;
+						wavs += object.sound[2].replace('"', '').replace('"', '') + '\n';
 						specimen.forEach((s)=>{
 							if (img[1] === s[0]) object.specimen = s;
 						});
@@ -91,7 +93,10 @@ fs.readFile('./' + xmlLocation + xmlUrl, function(err, data) {
 			});
 			console.log(output.length);
 			fs.writeFile(xmlLocation+xmlUrl + '.json', JSON.stringify(output), 'utf8',function() {
-				console.log("Success");
+				console.log("Success JSON");
+			});
+			fs.writeFile(xmlLocation+'wavs.txt', wavs, 'utf8',function() {
+				console.log("Success TXT");
 			});
 		},1000);
         console.log('Done');
