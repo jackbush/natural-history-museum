@@ -43,6 +43,7 @@ $ = (name, parent) => {
 
 require('aframe');
 var Tone = require('tone');
+require('./_threetone');
 require('./_compass');
 
 //// JACK
@@ -69,20 +70,26 @@ function Geolocator() {
 	_.current = {x: 0, y: 0};
 	_.smoothing = 0.9;
 	_.newcoords = {x: 0, y: 0};
-
+	_.basic;
 	_.setup = function() {
+		console.log("Setup GEO");
 		navigator.geolocation.watchPosition(_.setCoords);
 	};
 
 	_.setCoords = function(position) {
+		console.log("setCoords GEO", position);
+		_.basic = position.coords.latitude;
 		_.newcoords = {x: position.coords.latitude, y: position.coords.longitude}; // set newcoords
-		if ((_.start === null)&&(_.newcoords.x !== 0)&&(_.newcoords.y !==0)) _.start = _.newcoords; // define "start point"
+		if ((_.start === null)&&(_.newcoords.x !== 0)&&(_.newcoords.y !==0)) {
+			_.start = _.newcoords; // define "start point"
+			console.log("CREATE START");
+		}
 		_.newcoords.x -= _.start.x; // minus start point to get offset x
 		_.newcoords.y -= _.start.y; // minus start point to get offset y
 		// console.log('setNewCoords', _.newcoords, _.start);
 	};
 	_.update = function() {
-
+		document.querySelector('.geolocator').innerText = JSON.stringify(_.basic);
 		_.current.x = smoothValue(_.current.x, _.newcoords.x, 0.99);
 		_.current.y = smoothValue(_.current.y, _.newcoords.y, 0.99);
 	};
@@ -94,19 +101,30 @@ function Geolocator() {
 function Sampler() {
 	var _ = this;
 	_.sampler = null;
-	_.panVol = null;
-	_.setup = function(url, position) {
-		// _.panner =  new Tone.Panner3D(position.x, position.y, position.z);
+	_.panner = null;
+	_.volume = null;
+	_.setup = function(url, position, controls) {
+		_.panner =  new Tone.Panner3D();
+		_.volume = new Tone.Volume(-12);
+		_.reverb = new Tone.Freeverb(1, 3000);
+		_.JCreverb = new Tone.JCReverb(0.4);
 		_.sampler = new Tone.Sampler('../../audio/'+url, function(event, something){
 			console.log('Loaded!', _.sampler);
+
+
+
+
 			_.sampler.triggerAttack(0);
 		});
-		_.sampler.chain(Tone.Master);
+		_.sampler.chain(_.panner, Tone.Master);
+
 	};
-	_.update = function(volume, position) {
-		_.panner.position.x = position.x;
-		_.panner.position.y = position.y;
-		_.panner.position.z = position.z;
+	_.update = function(volume, camera, object) {
+		var distance = camera.position.distanceTo(object.position);
+		var scaled = map(distance, 0, soundobjects.ctrl.distanceThreshold, 0, 12);
+		Tone.Listener.updatePosition(camera);
+		_.panner.updatePosition(object);
+		_.volume.volume = (12 - ((scaled - 12) * -1)) * -1;
 	};
 
 }
@@ -135,31 +153,51 @@ function Soundplayer() {
 			if (_.current.indexOf(closest[i].audiofile) === -1) {
 				var sampler = new Sampler;
 
-				sampler.setup(closest[i].audiofile); /// SETUP - file, panning position
+				sampler.setup(closest[i].audiofile, closest[i].position); /// SETUP - file, panning position
 
 				_.samplers[closest[i].audiofile] = sampler; //// OBJECT ARRAY
 				_.current.push(closest[i].audiofile); //// LIST ARRAY
 
 			} else {
-				_.samplers[closest[i].audiofile].update(); // volume, panning position
+				_.samplers[closest[i].audiofile].update(0, scene.camera, closest[i]); // volume, panning position
 			}
 		}
 
-		console.log('Current active', _.current.length, closest.length);
+		// console.log('Current active', _.current.length, closest.length);
 
 	};
 };
 
 
+var touchForward = false;
+
 function draw() {
 
 	geolocator.update(); /// Keeps on smoothing values
 	soundplayer.update(); /// Looks for new soundz
+	// scene.camera.position.x = geolocator.current.x;
+	// scene.camera.position.z = geolocator.current.y;
 
-
-
+	// scene.camera.position.x += 1;
 	//// DEBUG FOUND SOUNDS
 
+	if (touchForward) {
+		// alert('forward!');
+		console.log('forward');
+		scene.camera.position.x += 1;
+		scene.camera.position.z += 1;
+	}
+
+	// var point =  getPointFromAngle({x: scene.camera.position.x, y: scene.camera.position.y}, scene.camera.rotation.y, 0.4);
+	// console.log(point);
+	// scene.camera.position.x = point.x;
+	// scene.camera.position.z = point.y;
+	// var speed = 1;
+	// var forward = scene.camera.lookAt() - scene.camera.Position;
+	// console.log(forward);
+	// scene.camera.position.x += forward.X * speed;
+	// scene.camera.position.y += forward.Y * speed;
+	// scene.camera.position.z += forward.Z * speed;
 	// document.querySelector('.found-sounds').innerText = JSON.stringify(soundplayer.current.length);
 
 	window.requestAnimationFrame(draw); /// LOOP
@@ -167,6 +205,7 @@ function draw() {
 
 
 ////// SETUP
+
 
 window.onload = function() {
 
@@ -179,6 +218,7 @@ window.onload = function() {
 	geolocator.setup();
 
 	soundplayer = new Soundplayer;
+	window.soundplayer = soundplayer;
 	soundplayer.setup();
 
 	// debugger;
@@ -190,16 +230,39 @@ window.onload = function() {
   	poissonResults = poisson.sampleUntilSolution();
 	// Adding sounds to the scene as meshes
 	soundobjects = new Objects;
-	soundobjects.setup(scene.scene, poissonResults);
+	// soundobjects.setup(scene.scene, poissonResults);
 
 	// Then render
 	scene.animate();
 
 	draw(); ///// BEGIN INFINITE DRAW LOOP
 
+	// setupCamera();
+	document.addEventListener( 'mousedown', startAudio, false );
+	document.addEventListener( 'touchstart', function() { touchForward = true; }, false );
+	document.addEventListener( 'touchend',  function() { touchForward = false; }, false );
+	document.addEventListener( 'touchmove', startAudio, false );
+
 };
 
+function startAudio( event ) {
 
+	// if ( event.touches.length === 1 ) {
+
+		// event.preventDefault();
+		// //create a synth and connect it to the master output (your speakers)
+		// var synth = new Tone.Synth().toMaster();
+
+		// //play a middle 'C' for the duration of an 8th note
+		// synth.triggerAttackRelease("C4", "8n");
+
+		// Object.keys(soundplayer.samplers).forEach((key)=>{
+		// 	soundplayer.samplers[key].sampler.triggerAttack(0);
+		// });
+
+	// }
+
+}
 
 
 
@@ -217,7 +280,6 @@ function setupCompass() {
 	}).init(function () {
 	 console.log('init');
 	});
-
 	Compass.watch(function (heading) {
 	 console.log('watching: ', heading);
 	});
@@ -238,5 +300,5 @@ function setupCamera() {
 			if (result.code == 35) console.log(result.message); 
 			video.volume = 0;
 		};
-	}, onFailSoHard);
+	}, function() {});
 }
