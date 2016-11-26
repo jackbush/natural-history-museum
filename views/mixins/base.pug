@@ -13,13 +13,11 @@ mixin page
 			title= locals.viewConfig.title
 			//- link(rel="shortcut icon", href="/favicon.ico", type="image/x-icon")
 
-			link(href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet")
+			//- link(href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet")
 			link(href="/styles/output/main.css", rel="stylesheet")
-			script(src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js')
-			link(href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css')
 			script(src='/js/output/poisson.js')
 			script(src='/js/output/main.js')
 
 		body
 			block
-
+			script(src='/js/output/threeScene.js')
