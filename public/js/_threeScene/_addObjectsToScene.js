@@ -15,8 +15,8 @@ module.exports = function addObjectsToScene (scene) {
 			var lat = parseFloat(lat);
 			var long = parseFloat(long);
 
-			// TODO: Male this a butterfly instead
-			var geometry = new THREE.SphereGeometry(1);
+			// TODO: Make this a butterfly instead
+			var geometry = new THREE.SphereGeometry(1, 3, 3); // <- this is so performace sucks less
 			var material = new THREE.MeshBasicMaterial({
 				color: 0xff0000,
 				wireframeLinewidth: 0.1,

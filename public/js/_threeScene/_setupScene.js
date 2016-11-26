@@ -1,15 +1,23 @@
 var THREE = require('three');
-require('./_deviceOrientationControls');
+require('./_DeviceOrientationControls');
+require('./_FirstPersonControls');
 
-module.exports = function setupScene () {
+module.exports = function setupScene() {
 	// Ingredients
 	var container = document.getElementById('container');
 	var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100);
-	var controls = new THREE.DeviceOrientationControls(camera);
 	var scene = new THREE.Scene();
-	var renderer = new THREE.WebGLRenderer();
+
+	// var controls = new THREE.DeviceOrientationControls(camera);
+	var controls = new THREE.FirstPersonControls(camera, container);
+	controls.noFly = true;
+	controls.movementSpeed = 100000;
+	controls.lookSpeed = 125;
+	controls.lookVertical = true;
+
 
 	// Renderer setup
+	var renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.domElement.style.position = 'absolute';
@@ -17,8 +25,12 @@ module.exports = function setupScene () {
 	container.appendChild(renderer.domElement);
 
 	// Animation...
-	var animate = function tick () {
-		controls.update();
+	var animate = function tick() {
+		// First person controls
+		var clock = new THREE.Clock();
+		controls.update(clock.getDelta())
+		// Device orientation controls
+		// controls.update();
 		renderer.render(scene, camera);
 		window.requestAnimationFrame(tick);
 	};
