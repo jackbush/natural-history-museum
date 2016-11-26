@@ -16,7 +16,7 @@ module.exports = function addObjectsToScene (scene) {
 			var long = parseFloat(long);
 
 			// TODO: Make this a butterfly instead
-			var geometry = new THREE.SphereGeometry(1, 3, 3); // <- this is so performace sucks less
+			var geometry = new THREE.SphereBufferGeometry(1, 3, 3); // <- this is so performace sucks less
 			var material = new THREE.MeshBasicMaterial({
 				color: 0xff0000,
 				wireframeLinewidth: 0.1,
@@ -25,7 +25,7 @@ module.exports = function addObjectsToScene (scene) {
 			var sphere = new THREE.Mesh(geometry, material);
 
 			scene.add(sphere);
-			sphere.position.set(long, (100*Math.random() - 50), lat);
+			sphere.position.set(long, 50 * Math.random(), lat);
 			soundShapes.push(sphere);
 		}
 	});
