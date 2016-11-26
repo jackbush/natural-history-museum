@@ -76,11 +76,10 @@ function Geolocator() {
 
 	_.setCoords = function(position) {
 		_.newcoords = {x: position.coords.latitude, y: position.coords.longitude}; // set newcoords
-		console.log('is first defined?', _.start);
 		if ((_.start === null)&&(_.newcoords.x !== 0)&&(_.newcoords.y !==0)) _.start = _.newcoords; // define "start point"
 		_.newcoords.x -= _.start.x; // minus start point to get offset x
 		_.newcoords.y -= _.start.y; // minus start point to get offset y
-		console.log('setNewCoords', _.newcoords, _.start);
+		// console.log('setNewCoords', _.newcoords, _.start);
 	};
 	_.update = function() {
 
@@ -96,16 +95,18 @@ function Sampler() {
 	var _ = this;
 	_.sampler = null;
 	_.panVol = null;
-	_.setup = function(url) {
-		_.panner = new Tone.Panner(1);
+	_.setup = function(url, position) {
+		// _.panner =  new Tone.Panner3D(position.x, position.y, position.z);
 		_.sampler = new Tone.Sampler('../../audio/'+url, function(event, something){
 			console.log('Loaded!', _.sampler);
 			_.sampler.triggerAttack(0);
 		});
-		_.sampler.chain(_.panner, Tone.Master);
+		_.sampler.chain(Tone.Master);
 	};
-	_.update = function(volume, panning) {
-
+	_.update = function(volume, position) {
+		_.panner.position.x = position.x;
+		_.panner.position.y = position.y;
+		_.panner.position.z = position.z;
 	};
 
 }
@@ -118,7 +119,7 @@ function Soundplayer() {
 	_.setup = function() {
 
 	};
-	_.update = function(geo) { ///// SEARCH FOR DISTANCE
+	_.update = function() { ///// SEARCH FOR DISTANCE
 		// console.log(geo.current);
 
 
@@ -128,17 +129,23 @@ function Soundplayer() {
 		///// CREATE AND UPDATE
 
 		for (var i=0; i<closest.length;i++) {
+
+
+
 			if (_.current.indexOf(closest[i].audiofile) === -1) {
 				var sampler = new Sampler;
-				sampler.setup(closest[i].audiofile);
-				_.samplers[closest[i].audiofile] = sampler;
-				_.current.push(closest[i].audiofile);
+
+				sampler.setup(closest[i].audiofile); /// SETUP - file, panning position
+
+				_.samplers[closest[i].audiofile] = sampler; //// OBJECT ARRAY
+				_.current.push(closest[i].audiofile); //// LIST ARRAY
+
 			} else {
-				_.samplers[closest[i].audiofile].update();
+				_.samplers[closest[i].audiofile].update(); // volume, panning position
 			}
 		}
 
-		console.log(_.current.length);
+		console.log('Current active', _.current.length, closest.length);
 
 	};
 };
@@ -147,7 +154,7 @@ function Soundplayer() {
 function draw() {
 
 	geolocator.update(); /// Keeps on smoothing values
-	soundplayer.update(geolocator); /// Looks for new soundz
+	soundplayer.update(); /// Looks for new soundz
 
 
 

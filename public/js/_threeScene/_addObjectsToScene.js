@@ -3,6 +3,8 @@ var sounds = require('../../../bin/bioacoustica2015/meta.xml.json');
 var ogg = require('../../../audio.json');
 var datGui = require('dat-gui');
 
+window.ogg = ogg;
+
 module.exports = function Objects () {
 	var _ = this;
 	_.scene;
@@ -23,7 +25,6 @@ module.exports = function Objects () {
 
 		poissonResults.forEach(function (result) {
 			var sphere = _.addObject(result.x, result.y);
-			console.log(sphere);
 			_.objects.push(sphere);
 		});
 	};
@@ -41,7 +42,9 @@ module.exports = function Objects () {
 		});
 		var sphere = new THREE.Mesh(geometry, material);
 		sphere.audiofile = ogg[_.counter];
-		_.counter = (_.counter >= ogg.length) ? _.counter + 1 : 0;
+		_.counter += 1;
+		if (_.counter >= ogg.length) _.counter = 0;
+		console.log(_.counter, ogg.length, sphere.audiofile);
 		_.scene.add(sphere);
 		sphere.position.set(x, 0, y);
 		return sphere;
