@@ -8,22 +8,27 @@ module.exports = {
 		files: [
 			'main.scss', 'main.sass'
 		],
-		dest: './public/styles/output/',
-		destProd: './rel/styles/'
+		dest: './public/styles/output/'
 	},
 	js: {
 		src: './public/js/',
 		directoryPrefix: '_',
 		directories: [
-			'main',
-			'threeScene'
+			'main'
 		],
 		dest: './public/js/output/',
-		destProd: './rel/js/',
 		outputSuffix: '.js'
 	},
 	pug: {
-		src: './views/',
-		destProd: './rel/'
+		src: './views/prod.pug',
+		newName: 'index',
+		dest: './rel/'
+	},
+	copy: {
+		files: [
+			'./public/styles/output/*.css',
+			'./public/js/output/*.js'
+		],
+		dest: './rel/'
 	}
 };

@@ -2,18 +2,7 @@ mixin pageDev
 	doctype html
 	html
 		head
-			meta(charset="utf-8")
-			meta(name="viewport", content="width=device-width, initial-scale=1.0")
-			meta(http-equiv="X-UA-Compatible" content="IE=edge")
-
-			//- Make it look like an app
-			meta(name="apple-mobile-web-app-capable" content="yes")
-			meta(name="mobile-web-app-capable" content="yes")
-
-			title Natural History Museum audio explorer
-			//- link(rel="shortcut icon", href="/favicon.ico", type="image/x-icon")
-
-			//- link(href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet")
+			+metadata
 			link(href="/styles/output/main.css", rel="stylesheet")
 			script(src='/js/output/poisson.js')
 			script(src='/js/output/threetone.js')
@@ -21,5 +10,30 @@ mixin pageDev
 
 		body
 			block
-			script(src='/js/output/threeScene.js')
 
+
+mixin pageProd
+	doctype html
+	html
+		head
+			+metadata
+			link(href="/styles/main.css", rel="stylesheet")
+			script(src='/js/poisson.js')
+			script(src='/js/threetone.js')
+			script(src='/js/main.js')
+
+		body
+			block
+
+
+mixin metadata
+	meta(charset="utf-8")
+	meta(name="viewport", content="width=device-width, initial-scale=1.0")
+	meta(http-equiv="X-UA-Compatible" content="IE=edge")
+
+	//- Make it look like an app
+	meta(name="apple-mobile-web-app-capable" content="yes")
+	meta(name="mobile-web-app-capable" content="yes")
+
+	title Natural History Museum audio explorer
+	//- link(rel="shortcut icon", href="/favicon.ico", type="image/x-icon")
