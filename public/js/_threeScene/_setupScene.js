@@ -5,15 +5,15 @@ require('./_FirstPersonControls');
 module.exports = function setupScene() {
 	// Ingredients
 	var container = document.getElementById('container');
-	var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100);
+	var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100); //// FOV, RATIO, MIN, MAX
 	var scene = new THREE.Scene();
 
 	// var controls = new THREE.DeviceOrientationControls(camera);
 	var controls = new THREE.FirstPersonControls(camera, container);
 	controls.noFly = true;
-	controls.movementSpeed = 100000;
-	controls.lookSpeed = 125;
-	controls.lookVertical = true;
+	controls.movementSpeed = 4;
+	controls.lookSpeed = 0.2;
+	controls.lookVertical = false;
 
 
 	// Renderer setup
@@ -25,9 +25,9 @@ module.exports = function setupScene() {
 	container.appendChild(renderer.domElement);
 
 	// Animation...
+	var clock = new THREE.Clock();
 	var animate = function tick() {
 		// First person controls
-		var clock = new THREE.Clock();
 		controls.update(clock.getDelta())
 		// Device orientation controls
 		// controls.update();
@@ -50,5 +50,5 @@ module.exports = function setupScene() {
 		scene: scene,
 		renderer: renderer,
 		animate: animate,
-	}
+	};
 };

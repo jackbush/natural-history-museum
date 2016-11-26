@@ -181,11 +181,24 @@ function draw() {
 	geolocator.update(); /// Keeps on smoothing values
 	soundplayer.update(geolocator, poissonResults); /// Looks for new soundz
 
-	document.querySelector('.camera-angle').innerText = JSON.stringify(document.querySelector('a-camera').getAttribute('rotation').y);
-	var position = document.querySelector('a-camera').getAttribute('position');
-	document.querySelector('.camera-position').innerText = JSON.stringify(position);
-	geolocator.current.x = position.x;
-	geolocator.current.y = position.z;
+
+	///// DEBUG CAMERA ROTATION
+
+	// document.querySelector('.camera-angle').innerText = JSON.stringify(document.querySelector('a-camera').getAttribute('rotation').y);
+
+	//// DEBUG CAMERA POSITION
+
+	// var position = document.querySelector('a-camera').getAttribute('position');
+	// document.querySelector('.camera-position').innerText = JSON.stringify(position);
+
+	/// AUTO UPDATE POSITION FROM CAMERA
+
+	// geolocator.current.x = position.x;
+	// geolocator.current.y = position.z;
+
+
+	//// DEBUG FOUND SOUNDS
+
 	document.querySelector('.found-sounds').innerText = JSON.stringify(soundplayer.current.length);
 
 	window.requestAnimationFrame(draw); /// LOOP
