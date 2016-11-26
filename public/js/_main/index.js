@@ -181,12 +181,10 @@ function draw() {
 	// scene.camera.position.x += 1;
 	//// DEBUG FOUND SOUNDS
 
-	if (touchForward) {
-		// alert('forward!');
-		console.log('forward');
-		scene.camera.position.x += 1;
-		scene.camera.position.z += 1;
-	}
+	// if (touchForward) {
+	// 	scene.camera.position.x += 0.8;
+	// 	scene.camera.position.z += 0.8;
+	// }
 
 	// var point =  getPointFromAngle({x: scene.camera.position.x, y: scene.camera.position.y}, scene.camera.rotation.y, 0.4);
 	// console.log(point);
@@ -230,7 +228,7 @@ window.onload = function() {
   	poissonResults = poisson.sampleUntilSolution();
 	// Adding sounds to the scene as meshes
 	soundobjects = new Objects;
-	// soundobjects.setup(scene.scene, poissonResults);
+	soundobjects.setup(scene.scene, poissonResults);
 
 	// Then render
 	scene.animate();
@@ -280,6 +278,7 @@ function setupCompass() {
 	}).init(function () {
 	 console.log('init');
 	});
+
 	Compass.watch(function (heading) {
 	 console.log('watching: ', heading);
 	});
