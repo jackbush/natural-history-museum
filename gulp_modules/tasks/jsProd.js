@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var es = require('event-stream');
 var rename = require('gulp-rename');
+var babel = require('babelify');
 var uglify = require('gulp-uglify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
@@ -23,7 +24,7 @@ gulp.task('js-prod', function () {
 			cache: {},
 			packageCache: {},
 			fullPaths: true
-		});
+		}).transform(babel, {presets: ['es2015']});
 
 		var bundle = function () {
 			return bundler.bundle()

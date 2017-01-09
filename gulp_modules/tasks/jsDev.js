@@ -3,6 +3,7 @@ var notify = require('gulp-notify');
 var sourcemaps = require('gulp-sourcemaps');
 var browserSync = require('browser-sync');
 var es = require('event-stream');
+var babel = require('babelify');
 var rename = require('gulp-rename');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
@@ -37,7 +38,7 @@ gulp.task('js-dev', function () {
 			packageCache: {},
 			fullPaths: true,
 			debug: true
-		}));
+		}).transform(babel, {presets: ['es2015']}));
 
 		var rebundle = function () {
 			return bundler.bundle()
