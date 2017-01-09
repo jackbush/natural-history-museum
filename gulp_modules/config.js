@@ -20,15 +20,6 @@ module.exports = {
 		outputSuffix: '.js'
 	},
 	pug: {
-		src: './views/prod.pug',
-		newName: 'index',
-		dest: './rel/'
-	},
-	copy: {
-		files: [
-			'./public/styles/output/*.css',
-			'./public/js/output/*.js'
-		],
-		dest: './rel/'
+		src: './views/'
 	}
 };

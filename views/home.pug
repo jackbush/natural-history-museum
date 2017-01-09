@@ -1,3 +1,10 @@
-include ./mixins/base
-+pageDev
-	include ./_animation
+extends ./layouts/default
+
+block content
+	.debug
+		.geolocator
+		.camera-angle
+		.camera-position
+		.found-sounds
+	video
+	#container
